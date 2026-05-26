@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const pending = getPendingRewards(wallet);
+    const pending = await getPendingRewards(wallet);
     if (pending.total <= 0) {
       return NextResponse.json(
         { error: 'No pending rewards to claim' },
@@ -21,11 +21,11 @@ export async function POST(req: NextRequest) {
     }
 
     // Mark rewards as claimed in our store
-    const claimed = markClaimed(wallet);
+    const claimed = await markClaimed(wallet);
 
     return NextResponse.json({
       claimed,
-      totalClaimed: claimed.reduce((sum, r) => sum + r.amount, 0),
+      totalClaimed: claimed.reduce((sum: number, r: any) => sum + r.amount, 0),
     });
   } catch (error: any) {
     return NextResponse.json(

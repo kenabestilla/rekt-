@@ -2,7 +2,7 @@
 
 import { use, useState } from 'react';
 import Link from 'next/link';
-import { useAgents } from '@/hooks/useAgents';
+import { useAgent } from '@/hooks/useAgents';
 import { AgentAnalytics } from '@/components/agents/AgentAnalytics';
 import { AgentReviews } from '@/components/agents/AgentReviews';
 import { CATEGORY_LABELS } from '@/types/agent';
@@ -10,10 +10,8 @@ import { clsx } from 'clsx';
 
 export default function AgentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const { data: agents, isLoading } = useAgents();
+  const { data: agent, isLoading } = useAgent(id);
   const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'reviews'>('overview');
-
-  const agent = agents?.find((a) => a.id === id);
 
   if (isLoading) {
     return (

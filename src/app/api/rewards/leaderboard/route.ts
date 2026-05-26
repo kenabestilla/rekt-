@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
     const limitParam = req.nextUrl.searchParams.get('limit');
     const limit = limitParam ? parseInt(limitParam, 10) : 20;
 
-    const leaderboard = getLeaderboard(limit);
+    const leaderboard = await getLeaderboard(limit);
     return NextResponse.json(leaderboard);
   } catch (error: any) {
     return NextResponse.json(

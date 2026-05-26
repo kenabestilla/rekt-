@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const registration = registerAgent(agentId, wallet);
+    const registration = await registerAgent(agentId, wallet);
     return NextResponse.json(registration, { status: 201 });
   } catch (error: any) {
     return NextResponse.json(

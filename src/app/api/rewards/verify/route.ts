@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const task = verifyTask(taskId);
+    const task = await verifyTask(taskId);
     return NextResponse.json(task);
   } catch (error: any) {
     return NextResponse.json(

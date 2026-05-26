@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const task = submitTask(agentId, wallet, type, score, proof || '');
+    const task = await submitTask(agentId, wallet, type, score, proof || '');
     return NextResponse.json(task, { status: 201 });
   } catch (error: any) {
     return NextResponse.json(

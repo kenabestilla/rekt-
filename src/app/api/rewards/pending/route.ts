@@ -12,9 +12,9 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const registration = getRegistration(wallet);
-    const pending = getPendingRewards(wallet);
-    const tasks = getTasksByWallet(wallet);
+    const registration = await getRegistration(wallet);
+    const pending = await getPendingRewards(wallet);
+    const tasks = await getTasksByWallet(wallet);
 
     return NextResponse.json({
       registration,

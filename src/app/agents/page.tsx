@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useAgents, useFeaturedAgents } from '@/hooks/useAgents';
+import { useAgents, useFeaturedAgents, useSubmitAgent } from '@/hooks/useAgents';
+import { useWallet } from '@/hooks/useWallet';
 import { AgentCard } from '@/components/agents/AgentCard';
 import { AgentTokens } from '@/components/agents/AgentTokens';
 import { AgentLeaderboard } from '@/components/agents/AgentLeaderboard';
@@ -23,14 +24,18 @@ const categories: (AgentCategory | 'all')[] = [
 ];
 
 export default function AgentsPage() {
-  const { data: agents, isLoading } = useAgents();
-  const { data: featured } = useFeaturedAgents();
+  const { data: agentsData, isLoading } = useAgents();
+  const { data: featuredData } = useFeaturedAgents();
+  const submitAgent = useSubmitAgent();
+  const { address } = useWallet();
+  const agents = agentsData?.agents || [];
+  const featured = featuredData?.agents || [];
   const [selectedCategory, setSelectedCategory] = useState<AgentCategory | 'all'>('all');
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [leaderboardSort, setLeaderboardSort] = useState<'users' | 'rating' | 'volume' | 'transactions'>('users');
 
-  const filteredAgents = agents?.filter(
-    (a) => selectedCategory === 'all' || a.category === selectedCategory
+  const filteredAgents = agents.filter(
+    (a: any) => selectedCategory === 'all' || a.category === selectedCategory
   );
 
   return (
@@ -222,7 +227,12 @@ export default function AgentsPage() {
         isOpen={showSubmitModal}
         onClose={() => setShowSubmitModal(false)}
         onSubmit={(agent) => {
-          console.log('Agent submitted:', agent);
+          if (!address) return;
+          submitAgent.mutate({
+            ...agent,
+            creator_wallet: address,
+            tags: [],
+          });
         }}
       />
     </div>

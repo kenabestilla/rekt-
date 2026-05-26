@@ -1,100 +1,132 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getMarketCoins } from '@/lib/coingecko';
 import { AGENT_TOKEN_IDS, REFRESH_INTERVALS } from '@/lib/constants';
 import type { Currency } from '@/types/coin';
+import type { Agent } from '@/types/agent';
 
-// Mock agent data - in production, this would come from an API
-const MOCK_AGENTS = [
-  {
-    id: 'ai16z',
-    name: 'AI16Z',
-    description: 'AI-powered venture capital DAO that autonomously invests in promising projects',
-    category: 'defi' as const,
-    status: 'live' as const,
-    creator: 'AI16Z Team',
-    avatar: '',
-    website: 'https://ai16z.ai',
-    twitter: '@aiaborai16z',
-    tokenSymbol: 'AI16Z',
-    chain: 'solana',
-    metrics: { users: 15000, transactions: 500000, volume: 120000000, rating: 4.5, reviews: 230 },
-    tags: ['DAO', 'Investment', 'Autonomous'],
-    featured: true,
-    createdAt: '2024-10-01',
-  },
-  {
-    id: 'virtuals-protocol',
-    name: 'Virtuals Protocol',
-    description: 'Platform for creating and monetizing AI agents in gaming and metaverse',
-    category: 'gaming' as const,
-    status: 'live' as const,
-    creator: 'Virtuals Protocol',
-    avatar: '',
-    website: 'https://virtuals.io',
-    tokenSymbol: 'VIRTUAL',
-    chain: 'base',
-    metrics: { users: 50000, transactions: 2000000, volume: 80000000, rating: 4.2, reviews: 180 },
-    tags: ['Gaming', 'Metaverse', 'AI Agents'],
-    featured: true,
-    createdAt: '2024-09-15',
-  },
-  {
-    id: 'zerebro',
-    name: 'Zerebro',
-    description: 'Autonomous AI agent that creates and distributes content across social platforms',
-    category: 'social' as const,
-    status: 'live' as const,
-    creator: 'Zerebro Team',
-    avatar: '',
-    website: 'https://zerebro.org',
-    tokenSymbol: 'ZEREBRO',
-    chain: 'solana',
-    metrics: { users: 25000, transactions: 800000, volume: 45000000, rating: 4.0, reviews: 150 },
-    tags: ['Content', 'Social Media', 'Autonomous'],
-    featured: true,
-    createdAt: '2024-11-01',
-  },
-  {
-    id: 'goatseus-maximus',
-    name: 'GOAT',
-    description: 'The first AI agent to achieve viral memecoin status through autonomous social engagement',
-    category: 'social' as const,
-    status: 'live' as const,
-    creator: 'Truth Terminal',
-    avatar: '',
-    tokenSymbol: 'GOAT',
-    chain: 'solana',
-    metrics: { users: 100000, transactions: 5000000, volume: 200000000, rating: 3.8, reviews: 500 },
-    tags: ['Memecoin', 'Viral', 'Social'],
-    featured: true,
-    createdAt: '2024-10-10',
-  },
-  {
-    id: 'act-i-the-ai-prophecy',
-    name: 'ACT',
-    description: 'AI agent focused on research and knowledge synthesis',
-    category: 'research' as const,
-    status: 'beta' as const,
-    creator: 'ACT Team',
-    avatar: '',
-    tokenSymbol: 'ACT',
-    chain: 'solana',
-    metrics: { users: 8000, transactions: 150000, volume: 20000000, rating: 4.1, reviews: 90 },
-    tags: ['Research', 'Knowledge', 'Analysis'],
-    createdAt: '2024-11-15',
-  },
-];
+interface AgentsResponse {
+  agents: Agent[];
+  total: number;
+}
 
-export function useAgents() {
-  return useQuery({
-    queryKey: ['agents'],
+export function useAgents(category?: string, sort?: string, limit?: number) {
+  return useQuery<AgentsResponse>({
+    queryKey: ['agents', category, sort, limit],
     queryFn: async () => {
-      // In production, fetch from API
-      return MOCK_AGENTS;
+      const params = new URLSearchParams();
+      if (category && category !== 'all') params.set('category', category);
+      if (sort) params.set('sort', sort);
+      if (limit) params.set('limit', String(limit));
+
+      const res = await fetch(`/api/agents?${params}`);
+      if (!res.ok) throw new Error('Failed to fetch agents');
+      return res.json();
+    },
+    staleTime: 60_000,
+  });
+}
+
+export function useAgent(id: string) {
+  return useQuery<Agent>({
+    queryKey: ['agent', id],
+    queryFn: async () => {
+      const res = await fetch(`/api/agents/${id}`);
+      if (!res.ok) throw new Error('Agent not found');
+      return res.json();
+    },
+    enabled: !!id,
+  });
+}
+
+export function useFeaturedAgents() {
+  return useQuery<AgentsResponse>({
+    queryKey: ['agents', 'featured'],
+    queryFn: async () => {
+      const res = await fetch('/api/agents?featured=true');
+      if (!res.ok) throw new Error('Failed to fetch featured agents');
+      return res.json();
     },
     staleTime: 300_000,
+  });
+}
+
+export function useSubmitAgent() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (agent: {
+      name: string;
+      description: string;
+      category: string;
+      creator_wallet: string;
+      website?: string;
+      twitter?: string;
+      discord?: string;
+      github?: string;
+      token_symbol?: string;
+      chain?: string;
+      tags?: string[];
+    }) => {
+      const res = await fetch('/api/agents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(agent),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Failed to submit agent');
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['agents'] });
+    },
+  });
+}
+
+export function useAgentReviews(agentId: string) {
+  return useQuery({
+    queryKey: ['agentReviews', agentId],
+    queryFn: async () => {
+      const res = await fetch(`/api/agents/${agentId}/reviews`);
+      if (!res.ok) throw new Error('Failed to fetch reviews');
+      return res.json();
+    },
+    enabled: !!agentId,
+  });
+}
+
+export function useSubmitReview() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      agentId,
+      reviewer_wallet,
+      reviewer_name,
+      rating,
+      comment,
+    }: {
+      agentId: string;
+      reviewer_wallet: string;
+      reviewer_name?: string;
+      rating: number;
+      comment: string;
+    }) => {
+      const res = await fetch(`/api/agents/${agentId}/reviews`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reviewer_wallet, reviewer_name, rating, comment }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Failed to submit review');
+      }
+      return res.json();
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['agentReviews', variables.agentId] });
+    },
   });
 }
 
@@ -105,7 +137,6 @@ export function useAgentTokens(currency: Currency = 'usd') {
     staleTime: REFRESH_INTERVALS.market,
     refetchInterval: REFRESH_INTERVALS.market,
     select: (data) => {
-      // Filter for agent-related tokens
       return data.filter((coin) =>
         AGENT_TOKEN_IDS.includes(coin.id) ||
         coin.name.toLowerCase().includes('ai') ||
@@ -114,12 +145,4 @@ export function useAgentTokens(currency: Currency = 'usd') {
       );
     },
   });
-}
-
-export function useFeaturedAgents() {
-  const { data: agents, ...rest } = useAgents();
-  return {
-    ...rest,
-    data: agents?.filter((a) => a.featured),
-  };
 }

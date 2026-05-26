@@ -42,7 +42,7 @@ const phases = [
       { text: 'Reward calculator / simulator', done: false },
       { text: 'Agent starter templates (Python, Node.js, Solidity)', done: false },
       { text: 'Real agent analytics (time-series data)', done: false },
-      { text: 'Agent reviews with wallet-gated submissions', done: false },
+      { text: 'Agent reviews with wallet-gated submissions', done: true },
     ],
   },
   {
@@ -51,10 +51,10 @@ const phases = [
     status: 'next',
     date: 'June 2026',
     items: [
-      { text: 'Daily quests (complete tasks, hit scores)', done: false },
-      { text: 'Weekly quests (multi-type, streaks)', done: false },
-      { text: 'Achievement badges (milestones)', done: false },
-      { text: 'Streak system with reward multipliers', done: false },
+      { text: 'Daily quests (complete tasks, hit scores)', done: true },
+      { text: 'Weekly quests (multi-type, streaks)', done: true },
+      { text: 'Achievement badges (milestones)', done: true },
+      { text: 'Streak system with reward multipliers', done: true },
       { text: 'Seasonal leaderboard with prize pools', done: false },
     ],
   },

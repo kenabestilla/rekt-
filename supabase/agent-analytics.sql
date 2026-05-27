@@ -1,7 +1,7 @@
 -- Agent analytics table for time-series metric tracking
 CREATE TABLE IF NOT EXISTS agent_analytics (
   id BIGSERIAL PRIMARY KEY,
-  agent_id TEXT NOT NULL REFERENCES agents(id) ON DELETE CASCADE,
+  agent_id UUID NOT NULL REFERENCES agents(id) ON DELETE CASCADE,
   metric_type TEXT NOT NULL CHECK (metric_type IN ('users', 'transactions', 'volume', 'uptime')),
   value NUMERIC NOT NULL,
   recorded_at TIMESTAMPTZ NOT NULL DEFAULT NOW()

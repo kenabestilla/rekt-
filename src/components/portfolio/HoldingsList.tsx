@@ -66,7 +66,7 @@ export function HoldingsList({ holdings, onRemove }: HoldingsListProps) {
                   href={`/coins/${holding.coinId.replace(':', '/')}`}
                   className="flex items-center gap-3"
                 >
-                  <TokenIcon src={holding.coinImage} alt={holding.coinName} symbol={holding.coinSymbol} size={24} />
+                  <TokenIcon src={holding.coinImage} alt={holding.coinName} symbol={holding.coinSymbol} size={24} chainId={holding.coinId.split(':')[0]} address={holding.coinId.split(':')[1]} />
                   <div>
                     <div className="text-sm font-medium text-white">{holding.coinName}</div>
                     <div className="text-[10px] text-white/30 uppercase font-mono">

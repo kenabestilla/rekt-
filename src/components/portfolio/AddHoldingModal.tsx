@@ -28,6 +28,8 @@ export function AddHoldingModal({ isOpen, onClose, onAdd }: AddHoldingModalProps
     name: string;
     symbol: string;
     thumb: string;
+    chainId?: string;
+    tokenAddress?: string;
   } | null>(null);
   const [quantity, setQuantity] = useState('');
   const [buyPrice, setBuyPrice] = useState('');
@@ -89,7 +91,7 @@ export function AddHoldingModal({ isOpen, onClose, onAdd }: AddHoldingModalProps
                     }}
                     className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-white/[0.03] transition-colors"
                   >
-                    <TokenIcon src={coin.thumb} alt={coin.name} symbol={coin.symbol} size={20} />
+                    <TokenIcon src={coin.thumb} alt={coin.name} symbol={coin.symbol} size={20} chainId={coin.chainId} address={coin.tokenAddress} />
                     <span className="text-white text-sm">{coin.name}</span>
                     <span className="text-white/30 text-xs uppercase font-mono">{coin.symbol}</span>
                     {coin.chainId && (
@@ -102,7 +104,7 @@ export function AddHoldingModal({ isOpen, onClose, onAdd }: AddHoldingModalProps
           </div>
         ) : (
           <div className="flex items-center gap-3 p-3 border border-white/10 bg-white/[0.02]">
-            <TokenIcon src={selectedCoin.thumb} alt={selectedCoin.name} symbol={selectedCoin.symbol} size={24} />
+            <TokenIcon src={selectedCoin.thumb} alt={selectedCoin.name} symbol={selectedCoin.symbol} size={24} chainId={selectedCoin.chainId} address={selectedCoin.tokenAddress} />
             <div>
               <div className="text-white text-sm">{selectedCoin.name}</div>
               <div className="text-[10px] text-white/30 uppercase font-mono">{selectedCoin.symbol}</div>

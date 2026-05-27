@@ -19,7 +19,7 @@ export function AlertCard({ alert, onToggle, onRemove }: AlertCardProps) {
     <div className="p-5">
       <div className="flex items-center gap-3 mb-4">
         <Link href={`/coins/${alert.coinId.replace(':', '/')}`} className="flex items-center gap-3">
-          <TokenIcon src={alert.coinImage} alt={alert.coinName} symbol={alert.coinSymbol} size={24} />
+          <TokenIcon src={alert.coinImage} alt={alert.coinName} symbol={alert.coinSymbol} size={24} chainId={alert.coinId.split(':')[0]} address={alert.coinId.split(':')[1]} />
           <div>
             <div className="text-sm font-medium text-white">{alert.coinName}</div>
             <div className="text-[10px] text-white/30 uppercase font-mono">{alert.coinSymbol}</div>

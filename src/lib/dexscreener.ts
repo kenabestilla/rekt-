@@ -386,7 +386,7 @@ export async function searchCoins(query: string): Promise<{ coins: { id: string;
     const seen = new Set<string>();
     const coins = (result.pairs || [])
       .filter((p) => {
-        const key = `${p.chainId}:${p.baseToken.address}`;
+        const key = `${p.chainId}:${p.baseToken.address.toLowerCase()}`;
         if (seen.has(key)) return false;
         seen.add(key);
         return true;

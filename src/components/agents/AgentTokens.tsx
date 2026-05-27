@@ -50,7 +50,7 @@ export function AgentTokens() {
           className="bg-black p-5 hover:bg-white/[0.03] transition-colors group"
         >
           <div className="flex items-center gap-3 mb-3">
-            <TokenIcon src={token.image} alt={token.name} symbol={token.symbol} size={32} />
+            <TokenIcon src={token.image} alt={token.name} symbol={token.symbol} size={32} chainId={token.chainId} address={token.id} />
             <div>
               <div className="text-sm font-medium text-white group-hover:text-white transition-colors">
                 {token.name}

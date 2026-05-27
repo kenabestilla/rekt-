@@ -55,7 +55,7 @@ export function TaskSubmission() {
   return (
     <div className="border border-white/10 p-6">
       <p className="text-[10px] text-white/30 font-mono uppercase tracking-widest mb-4">
-        submit task (demo)
+        submit task
       </p>
 
       <div className="space-y-4">

@@ -11,15 +11,18 @@ import type { Currency } from '@/types/coin';
 
 const navLinks = [
   { href: '/', label: 'Market' },
-  { href: '/trending', label: 'Trending' },
   { href: '/agents', label: 'Agents' },
-  { href: '/tools', label: 'Tools' },
   { href: '/marketplace', label: 'Marketplace' },
   { href: '/rewards', label: 'Rewards' },
-  { href: '/governance', label: 'Governance' },
-  { href: '/roadmap', label: 'Roadmap' },
   { href: '/portfolio', label: 'Portfolio' },
+  { href: '/governance', label: 'Govern' },
+];
+
+const moreLinks = [
+  { href: '/trending', label: 'Trending' },
+  { href: '/tools', label: 'Tools' },
   { href: '/alerts', label: 'Alerts' },
+  { href: '/roadmap', label: 'Roadmap' },
 ];
 
 const currencies: Currency[] = ['usd', 'eur', 'gbp', 'btc', 'eth'];
@@ -59,6 +62,34 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
+
+            {/* More dropdown */}
+            <div className="relative group">
+              <button className="px-3 py-1.5 text-xs font-mono text-white/40 hover:text-white transition-colors flex items-center gap-1">
+                More
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div className="absolute right-0 top-full mt-1 hidden group-hover:block z-50">
+                <div className="bg-black border border-white/20 py-1 min-w-[140px]">
+                  {moreLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={clsx(
+                        'block px-4 py-2 text-xs font-mono transition-colors',
+                        pathname === link.href
+                          ? 'text-white bg-white/5'
+                          : 'text-white/40 hover:text-white hover:bg-white/5'
+                      )}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Right side controls */}
@@ -92,7 +123,7 @@ export function Navbar() {
 
             {/* External links */}
             <a
-              href="https://x.com"
+              href="https://x.com/rektsagents"
               target="_blank"
               rel="noreferrer"
               className="hidden sm:flex items-center px-2 py-1.5 text-white/30 hover:text-white transition-colors border border-white/10 hover:border-white/30"
@@ -123,7 +154,7 @@ export function Navbar() {
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-white/10 bg-black">
           <div className="px-6 py-3 space-y-1">
-            {navLinks.map((link) => (
+            {[...navLinks, ...moreLinks].map((link) => (
               <Link
                 key={link.href}
                 href={link.href}

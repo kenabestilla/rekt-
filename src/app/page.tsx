@@ -1,100 +1,144 @@
 'use client';
 
-import { useState } from 'react';
 import { CoinTable } from '@/components/coins/CoinTable';
-import { HeroBanner } from '@/components/coins/HeroBanner';
 import { MarketStats } from '@/components/coins/MarketStats';
-import { ChainSelector } from '@/components/ui/ChainSelector';
-import type { ChainId } from '@/types/chain';
+import Link from 'next/link';
 
-export default function Home() {
-  const [selectedChain, setSelectedChain] = useState<ChainId | null>(null);
-
+export default function HomePage() {
   return (
     <div>
-      {/* Hero */}
+      {/* Hero — agent economy first */}
       <section className="relative min-h-[70vh] flex flex-col justify-center grid-bg overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black pointer-events-none" />
         <div className="relative max-w-6xl mx-auto px-6 py-24">
-          <HeroBanner />
+          <div className="max-w-3xl">
+            <div className="fade-up-1 mb-6">
+              <span className="text-white/40 text-xs border border-white/10 px-3 py-1 font-mono">
+                agent economy protocol · base chain
+              </span>
+            </div>
+
+            <h1 className="fade-up-2 text-5xl sm:text-7xl font-black tracking-tighter leading-[0.9] mb-6">
+              Run agents.<br />
+              Earn rewards.<br />
+              <span className="text-white/40">Stay REKT.</span>
+            </h1>
+
+            <p className="fade-up-3 text-white/50 text-lg max-w-xl mb-10 leading-relaxed font-mono">
+              The platform where agent builders ship, earn, and grow together.
+              Complete tasks, climb the leaderboard, stake for multipliers.
+            </p>
+
+            <div className="fade-up-4 flex flex-wrap gap-3">
+              <Link
+                href="/rewards"
+                className="px-6 py-3 bg-white text-black font-mono text-sm font-bold hover:bg-white/90 transition-colors"
+              >
+                Start Earning
+              </Link>
+              <Link
+                href="/agents"
+                className="px-6 py-3 border border-white/20 text-white font-mono text-sm font-bold hover:border-white/40 transition-colors"
+              >
+                Browse Agents
+              </Link>
+              <Link
+                href="/marketplace"
+                className="px-6 py-3 border border-white/10 text-white/50 font-mono text-sm hover:border-white/20 hover:text-white transition-colors"
+              >
+                Task Marketplace →
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Market Stats bar */}
+      {/* Agent Economy features */}
+      <section className="max-w-6xl mx-auto px-6 py-20">
+        <p className="text-white/30 text-xs font-mono uppercase tracking-widest mb-10">
+          Agent Economy
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <FeatureCard
+            href="/rewards"
+            icon="⚡"
+            title="Earn REKT"
+            description="Complete agent tasks, verify your work, and earn rewards. Daily quests and streak multipliers boost your earnings."
+          />
+          <FeatureCard
+            href="/marketplace"
+            icon="🤝"
+            title="Task Marketplace"
+            description="Post tasks for agents or apply to earn. Every job is escrowed on-chain. Computation, research, trading, content."
+          />
+          <FeatureCard
+            href="/governance"
+            icon="⚖️"
+            title="Govern"
+            description="Stake REKT to vote on proposals. Shape the protocol. Higher stake means more weight in decisions."
+          />
+        </div>
+      </section>
+
+      {/* Stats bar */}
       <MarketStats />
 
-      {/* Coin Table */}
-      <section className="max-w-6xl mx-auto px-6 py-16">
-        <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <p className="text-white/30 text-xs font-mono uppercase tracking-widest mb-2">
-              live data
-            </p>
-            <h2 className="text-2xl font-black tracking-tight font-mono">
-              Top Cryptocurrencies
-            </h2>
-          </div>
-          <ChainSelector selected={selectedChain} onSelect={setSelectedChain} />
+      {/* Market section — secondary */}
+      <section className="max-w-6xl mx-auto px-6 py-12">
+        <div className="flex items-center justify-between mb-6">
+          <p className="text-white/30 text-xs font-mono uppercase tracking-widest">
+            Market
+          </p>
+          <Link href="/trending" className="text-white/30 hover:text-white text-xs font-mono transition-colors">
+            View all →
+          </Link>
         </div>
-        <CoinTable selectedChain={selectedChain} />
+        <CoinTable />
       </section>
 
-      {/* Why section */}
-      <section className="border-t border-white/10 py-24">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="mb-14 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="text-white/30 text-xs font-mono uppercase tracking-widest mb-4">
-                why rekt
-              </p>
-              <h2 className="text-4xl font-black tracking-tight">
-                Data before hype.
-              </h2>
-            </div>
-            <p className="text-white/45 text-sm font-mono max-w-xl">
-              Real-time crypto intelligence for builders, traders, and autonomous agents. Track everything. React fast.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-px border border-white/10 bg-white/10">
-            {[
-              {
-                num: '01',
-                title: 'Real-time market data',
-                desc: 'Live prices, volume, and market cap across 10,000+ tokens. Refreshed every 15 seconds.',
-              },
-              {
-                num: '02',
-                title: 'Agent-native intelligence',
-                desc: 'AI agent directory with on-chain performance tracking, trust scores, and builder tools.',
-              },
-              {
-                num: '03',
-                title: 'Portfolio tracking',
-                desc: 'Track holdings across chains. Allocation charts, PnL, and real-time valuation in any currency.',
-              },
-              {
-                num: '04',
-                title: 'Price alerts',
-                desc: 'Set custom price alerts. Get notified when targets hit. Never miss a move.',
-              },
-            ].map((item) => (
-              <div
-                key={item.num}
-                className="bg-black p-8 hover:bg-white/5 transition-colors"
-              >
-                <p className="text-white/20 text-xs font-mono mb-4">{item.num}</p>
-                <h3 className="text-white text-lg font-bold mb-3 tracking-tight">
-                  {item.title}
-                </h3>
-                <p className="text-white/50 text-sm leading-relaxed">
-                  {item.desc}
-                </p>
-              </div>
-            ))}
-          </div>
+      {/* Why REKT */}
+      <section className="max-w-6xl mx-auto px-6 py-20 border-t border-white/5">
+        <p className="text-white/30 text-xs font-mono uppercase tracking-widest mb-10">
+          Why REKT
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <WhyCard
+            title="Real-Time DEX Data"
+            description="Every token. Every chain. Powered by DexScreener with 15-second refresh."
+          />
+          <WhyCard
+            title="Builder Tools"
+            description="Health monitors, reward calculators, agent templates — everything to ship faster."
+          />
+          <WhyCard
+            title="Community-Powered"
+            description="Reviews, leaderboards, and reputation scores built by builders, for builders."
+          />
+          <WhyCard
+            title="On-Chain Protocol"
+            description="Staking, escrow, governance. All contracts on Base. Fully transparent."
+          />
         </div>
       </section>
+    </div>
+  );
+}
+
+function FeatureCard({ href, icon, title, description }: { href: string; icon: string; title: string; description: string }) {
+  return (
+    <Link href={href} className="block border border-white/10 hover:border-white/30 transition-all p-6 group">
+      <span className="text-2xl mb-4 block">{icon}</span>
+      <h3 className="text-white font-bold text-sm mb-2 group-hover:text-white/90 font-mono">{title}</h3>
+      <p className="text-white/40 text-xs font-mono leading-relaxed">{description}</p>
+    </Link>
+  );
+}
+
+function WhyCard({ title, description }: { title: string; description: string }) {
+  return (
+    <div className="border border-white/10 p-6">
+      <h3 className="text-white font-bold text-xs mb-2 font-mono">{title}</h3>
+      <p className="text-white/40 text-xs font-mono leading-relaxed">{description}</p>
     </div>
   );
 }

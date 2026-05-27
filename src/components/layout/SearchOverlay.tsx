@@ -98,7 +98,7 @@ export function SearchOverlay() {
                   onClick={() => handleSelect(coin.chainId, coin.tokenAddress)}
                   className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-white/[0.03] transition-colors"
                 >
-                  <TokenIcon src={coin.thumb} alt={coin.name} symbol={coin.symbol} size={20} />
+                  <TokenIcon src={coin.thumb} alt={coin.name} symbol={coin.symbol} size={20} chainId={coin.chainId} address={coin.tokenAddress} />
                   <span className="text-white text-sm">{coin.name}</span>
                   <span className="text-white/30 text-xs uppercase font-mono">{coin.symbol}</span>
                   {coin.chainId && (

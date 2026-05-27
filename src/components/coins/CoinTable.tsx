@@ -146,7 +146,7 @@ function CoinRow({ coin, currency }: { coin: CoinMarket; currency: string }) {
       </td>
       <td className="py-4 px-4">
         <Link href={href} className="flex items-center gap-3">
-          <TokenIcon src={coin.image} alt={coin.name} symbol={coin.symbol} size={28} />
+          <TokenIcon src={coin.image} alt={coin.name} symbol={coin.symbol} size={28} chainId={coin.chainId} address={coin.baseToken?.address} />
           <div>
             <div className="text-sm font-medium text-white">{coin.name}</div>
             <div className="flex items-center gap-2">

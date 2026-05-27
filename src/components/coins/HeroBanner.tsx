@@ -105,7 +105,7 @@ export function HeroBanner() {
           ) : btc ? (
             <div className="p-6">
               <div className="flex items-center gap-3 mb-4">
-                <TokenIcon src={btc.image} alt={btc.name} symbol={btc.symbol} size={32} />
+                <TokenIcon src={btc.image} alt={btc.name} symbol={btc.symbol} size={32} chainId={btc.chainId} address={btc.baseToken?.address} />
                 <div>
                   <div className="text-white font-bold text-xl">
                     {formatCurrency(btc.current_price, currency)}

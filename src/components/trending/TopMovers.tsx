@@ -61,7 +61,7 @@ function MoverList({
               href={href}
               className="flex items-center gap-3 py-2 px-2 hover:bg-white/[0.03] transition-colors"
             >
-              <TokenIcon src={coin.image} alt={coin.name} symbol={coin.symbol} size={24} />
+              <TokenIcon src={coin.image} alt={coin.name} symbol={coin.symbol} size={24} chainId={coin.chainId} address={coin.baseToken?.address} />
               <div className="flex-1 min-w-0">
                 <div className="text-sm text-white truncate">{coin.name}</div>
                 <div className="text-[10px] text-white/30 uppercase font-mono">{coin.symbol}</div>

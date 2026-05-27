@@ -29,7 +29,7 @@ export function PriceTicker() {
           >
             <span className="text-white/10">◆</span>
             <span className="flex items-center gap-2">
-              <TokenIcon src={coin.image} alt={coin.name} symbol={coin.symbol} size={14} className="opacity-60" />
+              <TokenIcon src={coin.image} alt={coin.name} symbol={coin.symbol} size={14} className="opacity-60" chainId={coin.chainId} address={coin.baseToken?.address} />
               <span className="text-white/50">{coin.symbol}</span>
             </span>
             <span className="text-white/40">

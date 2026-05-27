@@ -1,11 +1,11 @@
 export const API_BASE_URL = 'https://api.dexscreener.com';
 
 export const REFRESH_INTERVALS = {
-  market: 30_000,
-  detail: 15_000,
-  portfolio: 30_000,
-  alerts: 30_000,
-  trending: 120_000,
+  market: 10_000,
+  detail: 8_000,
+  portfolio: 10_000,
+  alerts: 10_000,
+  trending: 60_000,
 } as const;
 
 export const PAGE_SIZE = 50;

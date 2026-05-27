@@ -46,7 +46,7 @@ export default function CoinDetailPage({ params }: { params: Promise<{ chain: st
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </Link>
-        <TokenIcon src={coin.image.large} alt={coin.name} symbol={coin.symbol} size={36} />
+        <TokenIcon src={coin.image.large} alt={coin.name} symbol={coin.symbol} size={36} chainId={chain} address={address} />
         <div>
           <h1 className="text-xl font-bold text-white tracking-tight">
             {coin.name}

@@ -53,7 +53,7 @@ export function TrendingCoins({ selectedChain }: TrendingCoinsProps) {
             className="bg-black p-5 hover:bg-white/[0.03] transition-colors"
           >
             <div className="flex items-center gap-3">
-              <TokenIcon src={item.item.thumb} alt={item.item.name} symbol={item.item.symbol} size={28} />
+              <TokenIcon src={item.item.thumb} alt={item.item.name} symbol={item.item.symbol} size={28} chainId={item.item.chainId} address={item.item.tokenAddress} />
               <div>
                 <div className="text-sm font-medium text-white truncate max-w-[140px]">{item.item.name}</div>
                 <div className="flex items-center gap-2">

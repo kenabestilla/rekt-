@@ -70,7 +70,7 @@ function getFallbackIconUrl(chainId: string, address: string): string {
 
 // Simple in-memory cache
 const cache = new Map<string, { data: unknown; timestamp: number }>();
-const CACHE_DURATION = 15_000; // 15 seconds
+const CACHE_DURATION = 8_000; // 8 seconds — match faster refresh intervals
 
 function getFromCache<T>(key: string): T | null {
   const cached = cache.get(key);
@@ -136,7 +136,7 @@ function deduplicatePairs(pairs: DexPair[]): DexPair[] {
   const best = new Map<string, DexPair>();
   for (const pair of pairs) {
     if (!SUPPORTED_CHAINS.has(pair.chainId)) continue;
-    const key = `${pair.chainId}:${pair.baseToken.address}`;
+    const key = `${pair.chainId}:${pair.baseToken.address.toLowerCase()}`;
     const existing = best.get(key);
     if (!existing || (pair.liquidity?.usd || 0) > (existing.liquidity?.usd || 0)) {
       best.set(key, pair);
@@ -148,7 +148,7 @@ function deduplicatePairs(pairs: DexPair[]): DexPair[] {
 // Convert DexScreener pair to our CoinMarket format
 function pairToCoinMarket(pair: DexPair): CoinMarket {
   return {
-    id: `${pair.chainId}:${pair.baseToken.address}`,
+    id: `${pair.chainId}:${pair.baseToken.address.toLowerCase()}`,
     symbol: pair.baseToken.symbol,
     name: pair.baseToken.name,
     image: pair.info?.imageUrl || getFallbackIconUrl(pair.chainId, pair.baseToken.address),

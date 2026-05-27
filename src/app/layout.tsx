@@ -20,11 +20,11 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   title: "REKT — Crypto Intelligence for Agent Builders",
   description: "Track every DEX token in real-time. Portfolio tracking, price alerts, agent directory, and builder tools. Powered by DexScreener.",
-  metadataBase: new URL('https://rekt-rho.vercel.app'),
+  metadataBase: new URL('https://rektagents.xyz'),
   openGraph: {
     title: "REKT — Crypto Intelligence for Agent Builders",
     description: "Track every DEX token in real-time. Portfolio tracking, price alerts, agent directory, and builder tools.",
-    url: 'https://rekt-rho.vercel.app',
+    url: 'https://rektagents.xyz',
     siteName: 'REKT',
     images: [
       {

@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getMarketCoins } from '@/lib/dexscreener';
 import { useCurrency } from '@/context/CurrencyContext';
 import { formatCurrency, formatPercentage } from '@/lib/formatters';
-import Image from 'next/image';
+import { TokenIcon } from '@/components/ui/TokenIcon';
 
 export function PriceTicker() {
   const { currency } = useCurrency();
@@ -29,17 +29,7 @@ export function PriceTicker() {
           >
             <span className="text-white/10">◆</span>
             <span className="flex items-center gap-2">
-              {coin.image ? (
-                <Image
-                  src={coin.image}
-                  alt={coin.name}
-                  width={14}
-                  height={14}
-                  className="rounded-full opacity-60"
-                />
-              ) : (
-                <span className="w-3.5 h-3.5 rounded-full bg-white/10" />
-              )}
+              <TokenIcon src={coin.image} alt={coin.name} symbol={coin.symbol} size={14} className="opacity-60" />
               <span className="text-white/50">{coin.symbol}</span>
             </span>
             <span className="text-white/40">

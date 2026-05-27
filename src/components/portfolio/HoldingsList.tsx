@@ -1,7 +1,7 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
+import { TokenIcon } from '@/components/ui/TokenIcon';
 import { useCurrency } from '@/context/CurrencyContext';
 import { formatCurrency } from '@/lib/formatters';
 import { clsx } from 'clsx';
@@ -66,13 +66,7 @@ export function HoldingsList({ holdings, onRemove }: HoldingsListProps) {
                   href={`/coins/${holding.coinId.replace(':', '/')}`}
                   className="flex items-center gap-3"
                 >
-                  <Image
-                    src={holding.coinImage}
-                    alt={holding.coinName}
-                    width={24}
-                    height={24}
-                    className="rounded-full"
-                  />
+                  <TokenIcon src={holding.coinImage} alt={holding.coinName} symbol={holding.coinSymbol} size={24} />
                   <div>
                     <div className="text-sm font-medium text-white">{holding.coinName}</div>
                     <div className="text-[10px] text-white/30 uppercase font-mono">

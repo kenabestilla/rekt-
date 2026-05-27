@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { searchCoins } from '@/lib/dexscreener';
 import { useDebounce } from '@/hooks/useDebounce';
 import { Modal } from '@/components/ui/Modal';
-import Image from 'next/image';
+import { TokenIcon } from '@/components/ui/TokenIcon';
 
 interface AddHoldingModalProps {
   isOpen: boolean;
@@ -89,17 +89,7 @@ export function AddHoldingModal({ isOpen, onClose, onAdd }: AddHoldingModalProps
                     }}
                     className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-white/[0.03] transition-colors"
                   >
-                    {coin.thumb ? (
-                      <Image
-                        src={coin.thumb}
-                        alt={coin.name}
-                        width={20}
-                        height={20}
-                        className="rounded-full"
-                      />
-                    ) : (
-                      <span className="w-5 h-5 rounded-full bg-white/10 shrink-0" />
-                    )}
+                    <TokenIcon src={coin.thumb} alt={coin.name} symbol={coin.symbol} size={20} />
                     <span className="text-white text-sm">{coin.name}</span>
                     <span className="text-white/30 text-xs uppercase font-mono">{coin.symbol}</span>
                     {coin.chainId && (
@@ -112,17 +102,7 @@ export function AddHoldingModal({ isOpen, onClose, onAdd }: AddHoldingModalProps
           </div>
         ) : (
           <div className="flex items-center gap-3 p-3 border border-white/10 bg-white/[0.02]">
-            {selectedCoin.thumb ? (
-              <Image
-                src={selectedCoin.thumb}
-                alt={selectedCoin.name}
-                width={24}
-                height={24}
-                className="rounded-full"
-              />
-            ) : (
-              <span className="w-6 h-6 rounded-full bg-white/10" />
-            )}
+            <TokenIcon src={selectedCoin.thumb} alt={selectedCoin.name} symbol={selectedCoin.symbol} size={24} />
             <div>
               <div className="text-white text-sm">{selectedCoin.name}</div>
               <div className="text-[10px] text-white/30 uppercase font-mono">{selectedCoin.symbol}</div>

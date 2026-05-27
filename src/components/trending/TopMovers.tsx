@@ -1,7 +1,7 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
+import { TokenIcon } from '@/components/ui/TokenIcon';
 import { useTopMovers } from '@/hooks/useTrending';
 import { formatCurrency, formatPercentage } from '@/lib/formatters';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -61,17 +61,7 @@ function MoverList({
               href={href}
               className="flex items-center gap-3 py-2 px-2 hover:bg-white/[0.03] transition-colors"
             >
-              {coin.image ? (
-                <Image
-                  src={coin.image}
-                  alt={coin.name}
-                  width={24}
-                  height={24}
-                  className="rounded-full"
-                />
-              ) : (
-                <span className="w-6 h-6 rounded-full bg-white/10 shrink-0" />
-              )}
+              <TokenIcon src={coin.image} alt={coin.name} symbol={coin.symbol} size={24} />
               <div className="flex-1 min-w-0">
                 <div className="text-sm text-white truncate">{coin.name}</div>
                 <div className="text-[10px] text-white/30 uppercase font-mono">{coin.symbol}</div>

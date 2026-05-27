@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { searchCoins, isContractAddress, getPlatformFromAddress } from '@/lib/dexscreener';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useSearch } from '@/context/SearchContext';
-import Image from 'next/image';
+import { TokenIcon } from '@/components/ui/TokenIcon';
 
 export function SearchOverlay() {
   const { isOpen, openSearch, closeSearch } = useSearch();
@@ -98,17 +98,7 @@ export function SearchOverlay() {
                   onClick={() => handleSelect(coin.chainId, coin.tokenAddress)}
                   className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-white/[0.03] transition-colors"
                 >
-                  {coin.thumb ? (
-                    <Image
-                      src={coin.thumb}
-                      alt={coin.name}
-                      width={20}
-                      height={20}
-                      className="rounded-full"
-                    />
-                  ) : (
-                    <span className="w-5 h-5 rounded-full bg-white/10 shrink-0" />
-                  )}
+                  <TokenIcon src={coin.thumb} alt={coin.name} symbol={coin.symbol} size={20} />
                   <span className="text-white text-sm">{coin.name}</span>
                   <span className="text-white/30 text-xs uppercase font-mono">{coin.symbol}</span>
                   {coin.chainId && (

@@ -1,7 +1,7 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
+import { TokenIcon } from '@/components/ui/TokenIcon';
 import { useTrending } from '@/hooks/useTrending';
 import { Skeleton } from '@/components/ui/Skeleton';
 import type { ChainId } from '@/types/chain';
@@ -53,17 +53,7 @@ export function TrendingCoins({ selectedChain }: TrendingCoinsProps) {
             className="bg-black p-5 hover:bg-white/[0.03] transition-colors"
           >
             <div className="flex items-center gap-3">
-              {item.item.thumb ? (
-                <Image
-                  src={item.item.thumb}
-                  alt={item.item.name}
-                  width={28}
-                  height={28}
-                  className="rounded-full"
-                />
-              ) : (
-                <span className="w-7 h-7 rounded-full bg-white/10 shrink-0" />
-              )}
+              <TokenIcon src={item.item.thumb} alt={item.item.name} symbol={item.item.symbol} size={28} />
               <div>
                 <div className="text-sm font-medium text-white truncate max-w-[140px]">{item.item.name}</div>
                 <div className="flex items-center gap-2">

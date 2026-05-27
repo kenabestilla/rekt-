@@ -1,7 +1,7 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
+import { TokenIcon } from '@/components/ui/TokenIcon';
 import { useCurrency } from '@/context/CurrencyContext';
 import { formatCurrency } from '@/lib/formatters';
 import type { Alert } from '@/types/alerts';
@@ -19,13 +19,7 @@ export function AlertCard({ alert, onToggle, onRemove }: AlertCardProps) {
     <div className="p-5">
       <div className="flex items-center gap-3 mb-4">
         <Link href={`/coins/${alert.coinId.replace(':', '/')}`} className="flex items-center gap-3">
-          <Image
-            src={alert.coinImage}
-            alt={alert.coinName}
-            width={24}
-            height={24}
-            className="rounded-full"
-          />
+          <TokenIcon src={alert.coinImage} alt={alert.coinName} symbol={alert.coinSymbol} size={24} />
           <div>
             <div className="text-sm font-medium text-white">{alert.coinName}</div>
             <div className="text-[10px] text-white/30 uppercase font-mono">{alert.coinSymbol}</div>

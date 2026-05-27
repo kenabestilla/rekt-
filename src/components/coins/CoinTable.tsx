@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { clsx } from 'clsx';
 import { useQuery } from '@tanstack/react-query';
 import { getMarketCoins } from '@/lib/dexscreener';
+import { TokenIcon } from '@/components/ui/TokenIcon';
 import { useCurrency } from '@/context/CurrencyContext';
 import { REFRESH_INTERVALS } from '@/lib/constants';
 import { formatCurrency, formatPercentage, formatLargeNumber } from '@/lib/formatters';
@@ -145,17 +146,7 @@ function CoinRow({ coin, currency }: { coin: CoinMarket; currency: string }) {
       </td>
       <td className="py-4 px-4">
         <Link href={href} className="flex items-center gap-3">
-          {coin.image ? (
-            <Image
-              src={coin.image}
-              alt={coin.name}
-              width={28}
-              height={28}
-              className="rounded-full"
-            />
-          ) : (
-            <span className="w-7 h-7 rounded-full bg-white/10 shrink-0" />
-          )}
+          <TokenIcon src={coin.image} alt={coin.name} symbol={coin.symbol} size={28} />
           <div>
             <div className="text-sm font-medium text-white">{coin.name}</div>
             <div className="flex items-center gap-2">

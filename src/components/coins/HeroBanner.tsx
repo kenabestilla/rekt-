@@ -5,7 +5,7 @@ import { getMarketCoins, getGlobalData } from '@/lib/dexscreener';
 import { useCurrency } from '@/context/CurrencyContext';
 import { formatCurrency, formatLargeNumber } from '@/lib/formatters';
 import Link from 'next/link';
-import Image from 'next/image';
+import { TokenIcon } from '@/components/ui/TokenIcon';
 
 export function HeroBanner() {
   const { currency } = useCurrency();
@@ -105,17 +105,7 @@ export function HeroBanner() {
           ) : btc ? (
             <div className="p-6">
               <div className="flex items-center gap-3 mb-4">
-                {btc.image ? (
-                  <Image
-                    src={btc.image}
-                    alt={btc.name}
-                    width={32}
-                    height={32}
-                    className="rounded-full"
-                  />
-                ) : (
-                  <span className="w-8 h-8 rounded-full bg-white/10" />
-                )}
+                <TokenIcon src={btc.image} alt={btc.name} symbol={btc.symbol} size={32} />
                 <div>
                   <div className="text-white font-bold text-xl">
                     {formatCurrency(btc.current_price, currency)}

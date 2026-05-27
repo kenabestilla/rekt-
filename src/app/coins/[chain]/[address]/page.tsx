@@ -1,8 +1,8 @@
 'use client';
 
 import { use } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
+import { TokenIcon } from '@/components/ui/TokenIcon';
 import { useCoinDetail } from '@/hooks/useCoinDetail';
 import { formatCurrency } from '@/lib/formatters';
 import { PriceChart } from '@/components/coins/PriceChart';
@@ -46,17 +46,7 @@ export default function CoinDetailPage({ params }: { params: Promise<{ chain: st
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </Link>
-        {coin.image.large ? (
-          <Image
-            src={coin.image.large}
-            alt={coin.name}
-            width={36}
-            height={36}
-            className="rounded-full"
-          />
-        ) : (
-          <span className="w-9 h-9 rounded-full bg-white/10" />
-        )}
+        <TokenIcon src={coin.image.large} alt={coin.name} symbol={coin.symbol} size={36} />
         <div>
           <h1 className="text-xl font-bold text-white tracking-tight">
             {coin.name}

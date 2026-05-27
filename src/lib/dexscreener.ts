@@ -32,6 +32,11 @@ const TRUSTWALLET_CHAIN_MAP: Record<string, string> = {
 };
 
 function getFallbackIconUrl(chainId: string, address: string): string {
+  // Solana: use Jupiter CDN
+  if (chainId === 'solana') {
+    return `https://cdn.jup.ag/icons/${address}.png`;
+  }
+  // EVM chains: use TrustWallet assets
   const twChain = TRUSTWALLET_CHAIN_MAP[chainId];
   if (!twChain) return '';
   return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${twChain}/assets/${address}/logo.png`;

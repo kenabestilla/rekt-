@@ -35,7 +35,7 @@ const phases = [
   {
     num: '03',
     title: 'Builder Tools',
-    status: 'done',
+    status: 'next',
     date: 'May 2026',
     items: [
       { text: 'Agent health monitor (uptime tracking)', done: true },
@@ -48,7 +48,7 @@ const phases = [
   {
     num: '04',
     title: 'Gamification',
-    status: 'done',
+    status: 'next',
     date: 'May 2026',
     items: [
       { text: 'Daily quests (complete tasks, hit scores)', done: true },

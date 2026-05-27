@@ -66,10 +66,18 @@ async function fetchDex<T>(endpoint: string, retries = 2): Promise<T> {
   throw new Error('Max retries exceeded');
 }
 
+// Supported chains for token detail lookups
+const SUPPORTED_CHAINS = new Set([
+  'ethereum', 'solana', 'bsc', 'base', 'arbitrum', 'polygon',
+  'avalanche', 'optimism', 'linea', 'scroll', 'zksync', 'mantle',
+  'blast', 'sonic', 'bnb', 'cronos', 'fantom', 'pulsechain',
+]);
+
 // Deduplicate pairs: keep highest liquidity pair per token (chainId:baseToken.address)
 function deduplicatePairs(pairs: DexPair[]): DexPair[] {
   const best = new Map<string, DexPair>();
   for (const pair of pairs) {
+    if (!SUPPORTED_CHAINS.has(pair.chainId)) continue;
     const key = `${pair.chainId}:${pair.baseToken.address}`;
     const existing = best.get(key);
     if (!existing || (pair.liquidity?.usd || 0) > (existing.liquidity?.usd || 0)) {

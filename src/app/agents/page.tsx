@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useAgents, useFeaturedAgents, useSubmitAgent } from '@/hooks/useAgents';
 import { useWallet } from '@/hooks/useWallet';
@@ -23,6 +23,8 @@ const categories: (AgentCategory | 'all')[] = [
   'data',
 ];
 
+const PAGE_SIZE = 12;
+
 export default function AgentsPage() {
   const { data: agentsData, isLoading } = useAgents();
   const { data: featuredData } = useFeaturedAgents();
@@ -31,210 +33,303 @@ export default function AgentsPage() {
   const agents = agentsData?.agents || [];
   const featured = featuredData?.agents || [];
   const [selectedCategory, setSelectedCategory] = useState<AgentCategory | 'all'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'name' | 'users' | 'rating'>('name');
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [leaderboardSort, setLeaderboardSort] = useState<'users' | 'rating' | 'volume' | 'transactions'>('users');
+  const [page, setPage] = useState(1);
+  const [activeTab, setActiveTab] = useState<'directory' | 'leaderboard' | 'tokens'>('directory');
 
-  const filteredAgents = agents.filter(
-    (a: any) => selectedCategory === 'all' || a.category === selectedCategory
-  );
+  const filteredAgents = useMemo(() => {
+    let result = agents.filter((a: any) => {
+      const matchesCategory = selectedCategory === 'all' || a.category === selectedCategory;
+      const matchesSearch = !searchQuery ||
+        a.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        a.description?.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+
+    result.sort((a: any, b: any) => {
+      if (sortBy === 'users') return (b.users_count || 0) - (a.users_count || 0);
+      if (sortBy === 'rating') return (b.rating || 0) - (a.rating || 0);
+      return (a.name || '').localeCompare(b.name || '');
+    });
+
+    return result;
+  }, [agents, selectedCategory, searchQuery, sortBy]);
+
+  const totalPages = Math.ceil(filteredAgents.length / PAGE_SIZE);
+  const paginatedAgents = filteredAgents.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
     <div>
       {/* Hero */}
-      <section className="relative min-h-[50vh] flex flex-col justify-center grid-bg overflow-hidden">
+      <section className="relative min-h-[40vh] flex flex-col justify-center grid-bg overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black pointer-events-none" />
-        <div className="relative max-w-6xl mx-auto px-6 py-24">
+        <div className="relative max-w-6xl mx-auto px-6 py-20">
           <div className="fade-up-1 mb-6">
             <span className="text-white/40 text-xs border border-white/10 px-3 py-1 font-mono">
-              for agent builders · autonomous · on-chain
+              discover · build · deploy
             </span>
           </div>
-          <h1 className="fade-up-2 text-5xl sm:text-6xl font-black tracking-tighter leading-none mb-6">
-            Build agents.
-            <br />
+          <h1 className="fade-up-2 text-4xl sm:text-6xl font-black tracking-tighter leading-none mb-4">
+            Build agents.<br />
             <span className="text-white/20">Get REKT.</span>
           </h1>
-          <p className="fade-up-3 text-white/50 text-lg max-w-2xl mb-8 leading-relaxed font-mono">
-            The ultimate platform for AI agent builders. Track agent tokens, discover new agents,
-            and access the tools to build autonomous agents.
+          <p className="fade-up-3 text-white/50 text-sm font-mono max-w-xl mb-8">
+            The agent directory on Base. Discover, track, and deploy autonomous agents.
           </p>
-          <div className="fade-up-4 flex flex-wrap gap-4">
+          <div className="fade-up-4 flex flex-wrap gap-3">
             <button
               onClick={() => setShowSubmitModal(true)}
-              className="bg-white text-black px-6 py-3 text-sm font-bold font-mono hover:bg-white/90 transition-colors"
+              className="px-5 py-2.5 bg-white text-black text-xs font-mono font-bold hover:bg-white/90 transition-colors"
             >
-              submit your agent →
+              Submit your agent
             </button>
-            <a
-              href="#leaderboard"
-              className="border border-white/20 px-6 py-3 text-sm text-white/70 hover:text-white hover:border-white transition-colors font-mono"
+            <Link
+              href="/leaderboard"
+              className="px-5 py-2.5 border border-white/20 text-white/70 text-xs font-mono hover:text-white hover:border-white transition-colors"
             >
-              leaderboard →
-            </a>
-            <a
-              href="#tokens"
-              className="border border-white/10 bg-white/[0.03] px-6 py-3 text-sm text-white/55 hover:text-white hover:border-white/30 transition-colors font-mono"
-            >
-              agent tokens →
-            </a>
+              Leaderboard
+            </Link>
           </div>
         </div>
       </section>
 
-      <div className="max-w-6xl mx-auto px-6 py-16">
-        {/* Leaderboard */}
-        <section id="leaderboard" className="mb-16">
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
-            <div>
-              <p className="text-white/30 text-xs font-mono uppercase tracking-widest mb-2">
-                performance
-              </p>
-              <h2 className="text-2xl font-black tracking-tight">Agent Leaderboard</h2>
+      <div className="max-w-6xl mx-auto px-6 py-12">
+        {/* Featured agents */}
+        {featured.length > 0 && (
+          <section className="mb-16">
+            <h2 className="text-xs font-bold text-white/60 uppercase font-mono tracking-widest mb-6">
+              Featured Agents
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px border border-white/10 bg-white/10">
+              {featured.map((agent: any) => (
+                <AgentCard key={agent.id} agent={agent} />
+              ))}
             </div>
-            <div className="flex items-center gap-1">
+          </section>
+        )}
+
+        {/* Tab navigation */}
+        <div className="flex gap-1 mb-8 border-b border-white/10">
+          {[
+            { id: 'directory' as const, label: 'Directory', count: filteredAgents.length },
+            { id: 'leaderboard' as const, label: 'Leaderboard' },
+            { id: 'tokens' as const, label: 'Tokens' },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-4 py-3 text-xs font-mono transition-colors border-b-2 -mb-px ${
+                activeTab === tab.id
+                  ? 'border-white text-white'
+                  : 'border-transparent text-white/30 hover:text-white/60'
+              }`}
+            >
+              {tab.label}
+              {tab.count !== undefined && (
+                <span className="ml-2 text-white/20">{tab.count}</span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Directory tab */}
+        {activeTab === 'directory' && (
+          <section>
+            {/* Search + filters */}
+            <div className="flex flex-col sm:flex-row gap-3 mb-6">
+              <div className="flex-1 relative">
+                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
+                  placeholder="Search agents..."
+                  className="w-full bg-white/5 border border-white/10 text-white pl-10 pr-4 py-2.5 font-mono text-sm focus:outline-none focus:border-white/30 placeholder-white/20"
+                />
+              </div>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+                className="bg-white/5 border border-white/10 text-white/50 px-3 py-2.5 font-mono text-xs focus:outline-none focus:border-white/30"
+              >
+                <option value="name">Sort: Name</option>
+                <option value="users">Sort: Users</option>
+                <option value="rating">Sort: Rating</option>
+              </select>
+            </div>
+
+            {/* Category pills */}
+            <div className="flex flex-wrap gap-1.5 mb-6">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => { setSelectedCategory(cat); setPage(1); }}
+                  className={`px-3 py-1.5 text-[10px] font-mono uppercase tracking-widest transition-colors border ${
+                    selectedCategory === cat
+                      ? 'border-white/30 text-white bg-white/5'
+                      : 'border-white/10 text-white/30 hover:text-white hover:border-white/20'
+                  }`}
+                >
+                  {cat === 'all' ? 'All' : CATEGORY_LABELS[cat] || cat}
+                </button>
+              ))}
+            </div>
+
+            {/* Agent grid */}
+            {isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px border border-white/10 bg-white/10">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="bg-black p-5 animate-pulse">
+                    <div className="h-4 bg-white/5 w-3/4 mb-3" />
+                    <div className="h-3 bg-white/5 w-1/2 mb-2" />
+                    <div className="h-3 bg-white/5 w-full" />
+                  </div>
+                ))}
+              </div>
+            ) : paginatedAgents.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px border border-white/10 bg-white/10">
+                  {paginatedAgents.map((agent: any) => (
+                    <AgentCard key={agent.id} agent={agent} />
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-between mt-6">
+                    <p className="text-white/30 text-xs font-mono">
+                      Showing {(page - 1) * PAGE_SIZE + 1}-{Math.min(page * PAGE_SIZE, filteredAgents.length)} of {filteredAgents.length}
+                    </p>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        disabled={page === 1}
+                        className="px-3 py-1.5 border border-white/10 text-white/40 text-xs font-mono hover:text-white disabled:opacity-30 transition-colors"
+                      >
+                        Prev
+                      </button>
+                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        const pageNum = Math.max(1, Math.min(page - 2, totalPages - 4)) + i;
+                        if (pageNum > totalPages) return null;
+                        return (
+                          <button
+                            key={pageNum}
+                            onClick={() => setPage(pageNum)}
+                            className={`px-3 py-1.5 border text-xs font-mono transition-colors ${
+                              page === pageNum
+                                ? 'border-white/30 text-white bg-white/5'
+                                : 'border-white/10 text-white/30 hover:text-white'
+                            }`}
+                          >
+                            {pageNum}
+                          </button>
+                        );
+                      })}
+                      <button
+                        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={page === totalPages}
+                        className="px-3 py-1.5 border border-white/10 text-white/40 text-xs font-mono hover:text-white disabled:opacity-30 transition-colors"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-center py-16 border border-white/10">
+                <p className="text-white/30 font-mono text-sm mb-2">No agents found</p>
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="text-white/40 text-xs font-mono hover:text-white transition-colors"
+                  >
+                    Clear search
+                  </button>
+                )}
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Leaderboard tab */}
+        {activeTab === 'leaderboard' && (
+          <section>
+            <div className="flex gap-1 mb-6">
               {(['users', 'rating', 'volume', 'transactions'] as const).map((sort) => (
                 <button
                   key={sort}
                   onClick={() => setLeaderboardSort(sort)}
-                  className={`px-3 py-1.5 text-xs font-mono transition-colors border ${
+                  className={`px-3 py-1.5 text-[10px] font-mono uppercase tracking-widest transition-colors border ${
                     leaderboardSort === sort
-                      ? 'border-white/20 text-white bg-white/[0.03]'
-                      : 'border-transparent text-white/30 hover:text-white'
+                      ? 'border-white/30 text-white bg-white/5'
+                      : 'border-white/10 text-white/30 hover:text-white'
                   }`}
                 >
                   {sort}
                 </button>
               ))}
             </div>
-          </div>
-          {agents && <AgentLeaderboard agents={agents} sortBy={leaderboardSort} />}
-        </section>
-
-        {/* Featured Agents */}
-        {featured && featured.length > 0 && (
-          <section className="mb-16">
-            <p className="text-white/30 text-xs font-mono uppercase tracking-widest mb-2">
-              curated
-            </p>
-            <h2 className="text-2xl font-black tracking-tight mb-8">Featured Agents</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px border border-white/10 bg-white/10">
-              {featured.map((agent) => (
-                <div key={agent.id} className="bg-black">
-                  <Link href={`/agents/${agent.id}`} className="block hover:bg-white/[0.02] transition-colors">
-                    <AgentCard agent={agent} />
-                  </Link>
-                </div>
-              ))}
-            </div>
+            <AgentLeaderboard agents={agents} sortBy={leaderboardSort} />
           </section>
         )}
 
-        {/* Agent Tokens */}
-        <section id="tokens" className="mb-16">
-          <p className="text-white/30 text-xs font-mono uppercase tracking-widest mb-2">
-            live prices
-          </p>
-          <h2 className="text-2xl font-black tracking-tight mb-2">Agent Tokens</h2>
-          <p className="text-white/40 text-sm font-mono mb-8">
-            AI agent tokens with live prices and market data
-          </p>
-          <AgentTokens />
-        </section>
+        {/* Tokens tab */}
+        {activeTab === 'tokens' && (
+          <section>
+            <AgentTokens />
+          </section>
+        )}
 
-        {/* All Agents */}
-        <section className="mb-16">
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
-            <div>
-              <p className="text-white/30 text-xs font-mono uppercase tracking-widest mb-2">
-                directory
-              </p>
-              <h2 className="text-2xl font-black tracking-tight">All Agents</h2>
-            </div>
-            <div className="flex flex-wrap gap-1">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-1.5 text-xs font-mono transition-colors border ${
-                    selectedCategory === cat
-                      ? 'border-white/20 text-white bg-white/[0.03]'
-                      : 'border-transparent text-white/30 hover:text-white'
-                  }`}
-                >
-                  {cat === 'all' ? 'all' : CATEGORY_LABELS[cat]}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {isLoading ? (
-            <div className="text-center py-12 text-white/30 font-mono text-sm">Loading agents...</div>
-          ) : filteredAgents && filteredAgents.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-px border border-white/10 bg-white/10">
-              {filteredAgents.map((agent) => (
-                <div key={agent.id} className="bg-black">
-                  <Link href={`/agents/${agent.id}`} className="block hover:bg-white/[0.02] transition-colors">
-                    <AgentCard agent={agent} />
-                  </Link>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 text-white/30 font-mono text-sm">
-              No agents found in this category
-            </div>
-          )}
-        </section>
-
-        {/* Builder Tools */}
-        <section id="tools" className="mb-16">
-          <p className="text-white/30 text-xs font-mono uppercase tracking-widest mb-2">
-            infrastructure
-          </p>
-          <h2 className="text-2xl font-black tracking-tight mb-2">Builder Tools</h2>
-          <p className="text-white/40 text-sm font-mono mb-8">
-            Everything you need to build, deploy, and scale autonomous agents
-          </p>
+        {/* Builder tools */}
+        <section className="mt-16">
+          <h2 className="text-xs font-bold text-white/60 uppercase font-mono tracking-widest mb-6">
+            Builder Tools
+          </h2>
           <BuilderTools />
         </section>
 
         {/* CTA */}
-        <section className="border-t border-white/10 py-24 text-center">
-          <h2 className="text-5xl font-black tracking-tight mb-4">Ready to Build?</h2>
-          <p className="text-white/40 font-mono text-sm mb-8 max-w-md mx-auto">
-            Join the next generation of agent builders. Start building autonomous agents today.
+        <section className="mt-16 border border-white/10 p-8 text-center">
+          <h2 className="text-xl font-black tracking-tight mb-3">Build on REKT</h2>
+          <p className="text-white/40 text-sm font-mono mb-6 max-w-md mx-auto">
+            Submit your agent to the directory. Get discovered by builders and traders on Base.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-3">
             <button
               onClick={() => setShowSubmitModal(true)}
-              className="bg-white text-black px-8 py-3 text-sm font-bold font-mono hover:bg-white/90 transition-colors"
+              className="px-6 py-3 bg-white text-black text-xs font-mono font-bold hover:bg-white/90 transition-colors"
             >
-              submit your agent →
+              Submit your agent
             </button>
             <a
               href="https://github.com/kenabestilla/rekt-"
               target="_blank"
               rel="noopener noreferrer"
-              className="border border-white/20 px-8 py-3 text-sm text-white/70 hover:text-white hover:border-white transition-colors font-mono"
+              className="px-6 py-3 border border-white/20 text-white/70 text-xs font-mono hover:text-white hover:border-white transition-colors"
             >
-              github →
+              GitHub
             </a>
           </div>
         </section>
       </div>
 
-      <SubmitAgentModal
-        isOpen={showSubmitModal}
-        onClose={() => setShowSubmitModal(false)}
-        onSubmit={(agent) => {
-          if (!address) return;
-          submitAgent.mutate({
-            ...agent,
-            creator_wallet: address,
-            tags: [],
-          });
-        }}
-      />
+      {/* Submit modal */}
+      {showSubmitModal && (
+        <SubmitAgentModal
+          isOpen={showSubmitModal}
+          onClose={() => setShowSubmitModal(false)}
+          onSubmit={(data) => {
+            submitAgent.mutate({ ...data, creator_wallet: address || '' });
+            setShowSubmitModal(false);
+          }}
+        />
+      )}
     </div>
   );
 }

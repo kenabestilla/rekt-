@@ -94,12 +94,13 @@ export async function fetchVirtualsAgents(options: {
 
     const data = await res.json();
 
-    // Dedup by name+symbol within Virtuals results
+    // Dedup by name (aggressive) within Virtuals results
     const seen = new Set<string>();
     const unique = (data.data || []).filter((va: any) => {
-      const key = `${(va.name || '').toLowerCase()}:${(va.symbol || '').toLowerCase()}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
+      const name = (va.name || '').toLowerCase().trim();
+      if (!name) return false;
+      if (seen.has(name)) return false;
+      seen.add(name);
       return true;
     });
 

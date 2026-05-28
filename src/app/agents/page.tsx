@@ -54,28 +54,46 @@ export default function AgentsPage() {
   const { address } = useWallet();
   const localAgents = agentsData?.agents || [];
   const virtualsAgents = discoverData?.agents || [];
-  const featured = featuredData?.agents || [];
+  // Dedup featured agents by name
+  const featured = useMemo(() => {
+    const raw = featuredData?.agents || [];
+    const seen = new Set<string>();
+    return raw.filter((a: any) => {
+      const key = (a.name || '').toLowerCase().trim();
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [featuredData?.agents]);
 
-  // Merge local + virtuals agents, dedup by name+symbol
+  // Merge local + virtuals agents, dedup by name
   const agents = useMemo(() => {
     if (dataSource === 'local') return localAgents;
     if (dataSource === 'virtuals') return virtualsAgents;
 
-    // Merge: local agents first, then virtuals (dedup by normalized name + symbol)
-    const seen = new Set(localAgents.map((a: any) => `${a.name?.toLowerCase()}:${a.tokenSymbol?.toLowerCase()}`));
+    // Merge: local agents first, then virtuals (dedup by normalized name)
+    const seen = new Set(localAgents.map((a: any) => (a.name || '').toLowerCase().trim()));
     const merged = [...localAgents];
     for (const va of virtualsAgents) {
-      const key = `${va.name?.toLowerCase()}:${va.tokenSymbol?.toLowerCase()}`;
-      if (!seen.has(key)) {
-        merged.push(va);
-        seen.add(key);
-      }
+      const key = (va.name || '').toLowerCase().trim();
+      if (!key || seen.has(key)) continue;
+      merged.push(va);
+      seen.add(key);
     }
     return merged;
   }, [localAgents, virtualsAgents, dataSource]);
 
   const filteredAgents = useMemo(() => {
-    let result = agents.filter((a: any) => {
+    // First dedup the full agent list by name
+    const seen = new Set<string>();
+    const unique = agents.filter((a: any) => {
+      const key = (a.name || '').toLowerCase().trim();
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    let result = unique.filter((a: any) => {
       const matchesCategory = selectedCategory === 'all' || a.category === selectedCategory;
       const matchesSearch = !searchQuery ||
         a.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||

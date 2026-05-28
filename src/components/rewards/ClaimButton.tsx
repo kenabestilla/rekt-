@@ -52,7 +52,7 @@ export function ClaimButton() {
         </button>
         {claimOffChain.isSuccess && (
           <p className="text-green-400 text-xs font-mono text-center mt-2">
-            Claimed {claimOffChain.data.totalClaimed.toFixed(2)} REKT
+            Claimed {(claimOffChain.data.totalClaimed ?? 0).toFixed(2)} REKT
           </p>
         )}
         {claimOffChain.isError && (

@@ -46,15 +46,15 @@ export function PendingRewards() {
       </div>
       <div className="grid grid-cols-3 gap-px bg-white/10">
         <div className="bg-black p-4 text-center">
-          <p className="text-lg font-bold text-white font-mono tabular-nums">{reg.tasksCompleted}</p>
+          <p className="text-lg font-bold text-white font-mono tabular-nums">{reg.tasksCompleted ?? 0}</p>
           <p className="text-[10px] text-white/30 font-mono uppercase tracking-widest">tasks</p>
         </div>
         <div className="bg-black p-4 text-center">
-          <p className="text-lg font-bold text-white font-mono tabular-nums">{reg.reputation}</p>
+          <p className="text-lg font-bold text-white font-mono tabular-nums">{reg.reputation ?? 50}</p>
           <p className="text-[10px] text-white/30 font-mono uppercase tracking-widest">reputation</p>
         </div>
         <div className="bg-black p-4 text-center">
-          <p className="text-lg font-bold text-white font-mono tabular-nums">{reg.totalEarned.toFixed(2)}</p>
+          <p className="text-lg font-bold text-white font-mono tabular-nums">{(reg.totalEarned ?? 0).toFixed(2)}</p>
           <p className="text-[10px] text-white/30 font-mono uppercase tracking-widest">earned</p>
         </div>
       </div>

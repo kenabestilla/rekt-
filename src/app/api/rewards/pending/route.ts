@@ -12,9 +12,19 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const registration = await getRegistration(wallet);
+    const rawReg = await getRegistration(wallet);
     const pending = await getPendingRewards(wallet);
     const tasks = await getTasksByWallet(wallet);
+
+    // Map snake_case from Supabase to camelCase for frontend
+    const registration = rawReg ? {
+      ...rawReg,
+      agentId: rawReg.agent_id,
+      totalEarned: parseFloat(rawReg.total_earned ?? 0),
+      pendingReward: parseFloat(rawReg.pending_reward ?? 0),
+      tasksCompleted: rawReg.tasks_completed ?? 0,
+      reputation: rawReg.reputation ?? 50,
+    } : null;
 
     return NextResponse.json({
       registration,

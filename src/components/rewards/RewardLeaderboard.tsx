@@ -81,7 +81,7 @@ export function RewardLeaderboard() {
                   {entry.reputation}
                 </td>
                 <td className="py-3 px-4 text-right text-xs text-white font-bold font-mono tabular-nums">
-                  {entry.totalEarned.toFixed(2)} REKT
+                  {(entry.totalEarned ?? 0).toFixed(2)} REKT
                 </td>
               </tr>
             ))}

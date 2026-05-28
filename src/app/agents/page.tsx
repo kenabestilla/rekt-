@@ -25,6 +25,12 @@ const categories: (AgentCategory | 'all')[] = [
 
 const PAGE_SIZE = 12;
 
+function formatNumber(num: number): string {
+  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
+  if (num >= 1_000) return `${(num / 1_000).toFixed(1)}K`;
+  return num.toString();
+}
+
 export default function AgentsPage() {
   const [selectedCategory, setSelectedCategory] = useState<AgentCategory | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -50,18 +56,19 @@ export default function AgentsPage() {
   const virtualsAgents = discoverData?.agents || [];
   const featured = featuredData?.agents || [];
 
-  // Merge local + virtuals agents, dedup by name
+  // Merge local + virtuals agents, dedup by name+symbol
   const agents = useMemo(() => {
     if (dataSource === 'local') return localAgents;
     if (dataSource === 'virtuals') return virtualsAgents;
 
-    // Merge: local agents first, then virtuals (dedup by name)
-    const seen = new Set(localAgents.map((a: any) => a.name?.toLowerCase()));
+    // Merge: local agents first, then virtuals (dedup by normalized name + symbol)
+    const seen = new Set(localAgents.map((a: any) => `${a.name?.toLowerCase()}:${a.tokenSymbol?.toLowerCase()}`));
     const merged = [...localAgents];
     for (const va of virtualsAgents) {
-      if (!seen.has(va.name?.toLowerCase())) {
+      const key = `${va.name?.toLowerCase()}:${va.tokenSymbol?.toLowerCase()}`;
+      if (!seen.has(key)) {
         merged.push(va);
-        seen.add(va.name?.toLowerCase());
+        seen.add(key);
       }
     }
     return merged;
@@ -166,11 +173,11 @@ export default function AgentsPage() {
         {activeTab === 'directory' && (
           <section>
             {/* Source toggle */}
-            <div className="flex gap-1 mb-4">
+            <div className="flex flex-wrap items-center gap-1.5 mb-4">
               {[
                 { id: 'all' as const, label: 'All Sources' },
-                { id: 'virtuals' as const, label: 'Virtuals Protocol' },
-                { id: 'local' as const, label: 'REKT Directory' },
+                { id: 'virtuals' as const, label: 'Virtuals' },
+                { id: 'local' as const, label: 'REKT' },
               ].map((src) => (
                 <button
                   key={src.id}
@@ -185,15 +192,15 @@ export default function AgentsPage() {
                 </button>
               ))}
               {discoverData?.source && (
-                <span className="ml-auto text-[10px] text-white/20 font-mono">
-                  {discoverData.total || 0} agents discovered
+                <span className="text-[10px] text-white/20 font-mono ml-auto">
+                  {formatNumber(discoverData.total || 0)} discovered
                 </span>
               )}
             </div>
 
             {/* Search + filters */}
-            <div className="flex flex-col sm:flex-row gap-3 mb-6">
-              <div className="flex-1 relative">
+            <div className="flex gap-3 mb-6">
+              <div className="flex-1 relative min-w-0">
                 <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
@@ -201,18 +208,18 @@ export default function AgentsPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
-                  placeholder="Search 43,000+ agents..."
+                  placeholder="Search agents..."
                   className="w-full bg-white/5 border border-white/10 text-white pl-10 pr-4 py-2.5 font-mono text-sm focus:outline-none focus:border-white/30 placeholder-white/20"
                 />
               </div>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-                className="bg-white/5 border border-white/10 text-white/50 px-3 py-2.5 font-mono text-xs focus:outline-none focus:border-white/30"
+                className="bg-white/5 border border-white/10 text-white/50 px-3 py-2.5 font-mono text-xs focus:outline-none focus:border-white/30 shrink-0"
               >
-                <option value="name">Sort: Name</option>
-                <option value="users">Sort: Users</option>
-                <option value="rating">Sort: Rating</option>
+                <option value="name">Name</option>
+                <option value="users">Users</option>
+                <option value="rating">Rating</option>
               </select>
             </div>
 

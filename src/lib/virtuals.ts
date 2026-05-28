@@ -93,7 +93,17 @@ export async function fetchVirtualsAgents(options: {
     if (!res.ok) throw new Error(`Virtuals API error: ${res.status}`);
 
     const data = await res.json();
-    const agents = (data.data || []).map(transformVirtualsAgent);
+
+    // Dedup by name+symbol within Virtuals results
+    const seen = new Set<string>();
+    const unique = (data.data || []).filter((va: any) => {
+      const key = `${(va.name || '').toLowerCase()}:${(va.symbol || '').toLowerCase()}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    const agents = unique.map(transformVirtualsAgent);
 
     // Sort by requested field
     agents.sort((a: Agent, b: Agent) => {

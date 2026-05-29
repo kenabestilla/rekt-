@@ -61,7 +61,7 @@ export default function GovernancePage() {
           <p className="fade-up-3 text-white/50 text-lg max-w-2xl mb-8 leading-relaxed font-mono">
             Vote on protocol parameters. Voting power = staked REKT. Proposals need 10% quorum to pass.
           </p>
-          {isConnected && isOnChain && (
+          {isConnected && (
             <button
               onClick={() => setShowCreateModal(true)}
               className="fade-up-4 px-6 py-3 bg-white text-black font-mono text-sm font-bold hover:bg-white/90 transition-colors"
@@ -71,7 +71,7 @@ export default function GovernancePage() {
           )}
           {!isOnChain && (
             <p className="mt-4 text-yellow-400/60 text-xs font-mono">
-              Governance contracts not deployed yet.
+              On-chain governance coming soon. Voting via Supabase for now.
             </p>
           )}
         </div>
@@ -182,7 +182,7 @@ function ProposalCard({ proposal }: { proposal: any }) {
       </div>
 
       {/* Vote buttons */}
-      {address && proposal.status === 'active' && (
+      {address && (proposal.status === 'active' || proposal.status === 'pending') && (
         <div className="flex gap-2 mt-3 pt-3 border-t border-white/5">
           <button
             onClick={() => handleVote(true)}
@@ -206,7 +206,9 @@ function ProposalCard({ proposal }: { proposal: any }) {
 
 function CreateProposalModal({ onClose }: { onClose: () => void }) {
   const { address, isConnected } = useAccount();
-  const { propose, isPending, isSuccess } = useCreateProposal();
+  const { propose, isSuccess } = useCreateProposal();
+  const isOnChain = !!AGENT_GOVERNANCE_ADDRESS;
+  const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     title: '',
     description: '',
@@ -215,15 +217,19 @@ function CreateProposalModal({ onClose }: { onClose: () => void }) {
   });
 
   useEffect(() => {
-    if (isSuccess) onClose();
+    if (isSuccess) {
+      onClose();
+      window.location.reload();
+    }
   }, [isSuccess, onClose]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isConnected) return;
+    if (!isConnected || !address) return;
+    setSubmitting(true);
 
-    // Save to Supabase
     try {
+      // Save to Supabase
       await fetch('/api/governance/proposals', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -236,15 +242,21 @@ function CreateProposalModal({ onClose }: { onClose: () => void }) {
         }),
       });
 
-      // Post on-chain
-      propose(
-        form.title,
-        form.description,
-        (form.targetContract || '0x' + '0'.repeat(40)) as `0x${string}`,
-        (form.callData || '0x') as `0x${string}`
-      );
+      // Post on-chain if contracts deployed
+      if (isOnChain) {
+        propose(
+          form.title,
+          form.description,
+          (form.targetContract || '0x' + '0'.repeat(40)) as `0x${string}`,
+          (form.callData || '0x') as `0x${string}`
+        );
+      } else {
+        onClose();
+        window.location.reload();
+      }
     } catch (err) {
       console.error('Failed to create proposal:', err);
+      setSubmitting(false);
     }
   };
 
@@ -298,10 +310,10 @@ function CreateProposalModal({ onClose }: { onClose: () => void }) {
 
           <button
             type="submit"
-            disabled={isPending || !isConnected}
+            disabled={submitting || !isConnected}
             className="w-full px-6 py-3 bg-white text-black font-mono text-sm font-bold hover:bg-white/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isPending ? 'Creating...' : 'Submit Proposal'}
+            {submitting ? 'Creating...' : 'Submit Proposal'}
           </button>
         </form>
       </div>

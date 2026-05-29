@@ -145,16 +145,18 @@ export async function initQuests(wallet: string) {
     await supabaseServer.from('quest_progress').insert(weeklyInserts);
   }
 
-  // Init achievements (one-time, check if any exist)
+  // Init achievements — insert any missing ones
   const { data: existingAch } = await supabaseServer
     .from('quest_progress')
     .select('quest_id')
     .eq('wallet', w)
-    .eq('quest_type', 'achievement')
-    .limit(1);
+    .eq('quest_type', 'achievement');
 
-  if (!existingAch || existingAch.length === 0) {
-    const achInserts = ACHIEVEMENTS.map(q => ({
+  const existingIds = new Set((existingAch || []).map((r: any) => r.quest_id));
+  const missingAchs = ACHIEVEMENTS.filter(q => !existingIds.has(q.id));
+
+  if (missingAchs.length > 0) {
+    const achInserts = missingAchs.map(q => ({
       wallet: w,
       quest_id: q.id,
       quest_type: 'achievement' as QuestType,

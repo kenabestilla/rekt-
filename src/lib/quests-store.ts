@@ -261,6 +261,31 @@ export async function progressQuests(wallet: string, taskType: string, score: nu
   }
 }
 
+// Verify a social quest (honor system — opens link then marks complete)
+export async function verifySocialQuest(wallet: string, questId: string) {
+  const w = wallet.toLowerCase();
+
+  const socialQuests = ['ach_follow_x'];
+  if (!socialQuests.includes(questId)) throw new Error('Not a social quest');
+
+  const { data: quest } = await supabaseServer
+    .from('quest_progress')
+    .select('*')
+    .eq('wallet', w)
+    .eq('quest_id', questId)
+    .eq('status', 'active')
+    .single();
+
+  if (!quest) throw new Error('Quest not found or already completed');
+
+  await supabaseServer
+    .from('quest_progress')
+    .update({ current: 1, status: 'completed' })
+    .eq('id', quest.id);
+
+  return { questId, status: 'completed' };
+}
+
 // Claim a quest reward
 export async function claimQuest(wallet: string, questId: string) {
   const w = wallet.toLowerCase();

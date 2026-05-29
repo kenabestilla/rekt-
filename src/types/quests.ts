@@ -54,6 +54,7 @@ export const ACHIEVEMENTS: QuestDef[] = [
   { id: 'ach_rep_90', title: 'Elite Agent', description: 'Reach 90 reputation', type: 'achievement', requirement: 90, reward: 50, icon: '4' },
   { id: 'ach_streak_7', title: 'Week Warrior', description: '7-day streak', type: 'achievement', requirement: 7, reward: 30, icon: '5' },
   { id: 'ach_streak_30', title: 'Unstoppable', description: '30-day streak', type: 'achievement', requirement: 30, reward: 200, icon: '6' },
+  { id: 'ach_follow_x', title: 'Follow the Signal', description: 'Follow @rektsagents on X', type: 'achievement', requirement: 1, reward: 25, icon: 'X' },
 ];
 
 export const STREAK_MULTIPLIERS: Record<number, number> = {

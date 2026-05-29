@@ -34,9 +34,34 @@ export function QuestsPanel() {
   const streak = data?.streak;
   const filtered = quests.filter((q: any) => q.quest_type === tab);
 
+  const [verifying, setVerifying] = useState<string | null>(null);
+
   const handleClaim = (questId: string) => {
     if (!address) return;
     claimQuest.mutate({ wallet: address, questId });
+  };
+
+  const handleSocialQuest = async (questId: string) => {
+    if (!address) return;
+    // Open X profile in new tab
+    if (questId === 'ach_follow_x') {
+      window.open('https://x.com/rektsagents', '_blank');
+    }
+    // Mark as completed after a short delay (honor system)
+    setVerifying(questId);
+    try {
+      await fetch('/api/quests/verify-social', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ wallet: address, questId }),
+      });
+      // Refetch quests
+      window.location.reload();
+    } catch (err) {
+      console.error('Failed to verify social quest:', err);
+    } finally {
+      setVerifying(null);
+    }
   };
 
   return (
@@ -140,6 +165,15 @@ export function QuestsPanel() {
                       </span>
                     </div>
                   </div>
+                  {quest.quest_id === 'ach_follow_x' && quest.status === 'active' && (
+                    <button
+                      onClick={() => handleSocialQuest(quest.quest_id)}
+                      disabled={verifying === quest.quest_id}
+                      className="px-3 py-1.5 bg-white text-black text-[10px] font-bold font-mono uppercase tracking-widest hover:bg-white/90 transition-colors disabled:opacity-30 shrink-0"
+                    >
+                      {verifying === quest.quest_id ? '...' : 'follow'}
+                    </button>
+                  )}
                   {quest.status === 'completed' && (
                     <button
                       onClick={() => handleClaim(quest.quest_id)}

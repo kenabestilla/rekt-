@@ -62,7 +62,7 @@ const phases = [
   {
     num: '05',
     title: 'Scale & Ship',
-    status: 'planned',
+    status: 'in-progress',
     date: 'July 2026',
     items: [
       { text: 'Rate limiting + abuse protection', done: false },

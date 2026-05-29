@@ -97,7 +97,7 @@ export function Footer() {
             </span>
           </div>
           <p className="text-white/20 text-[10px] font-mono">
-            Data by DexScreener. Not financial advice.
+            Built on Base
           </p>
         </div>
       </div>

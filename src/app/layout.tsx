@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     siteName: 'REKT',
     images: [
       {
-        url: '/og.svg',
+        url: 'https://rektagents.xyz/og',
         width: 1200,
         height: 630,
         alt: 'REKT — Crypto Intelligence',
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: "REKT — Crypto Intelligence for Agent Builders",
     description: "Track every DEX token in real-time. Portfolio, alerts, agent directory, and builder tools.",
-    images: ['/og.svg'],
+    images: ['https://rektagents.xyz/og'],
   },
   manifest: '/manifest.json',
   robots: {
@@ -65,6 +65,45 @@ export default function RootLayout({
       className={`${geistMono.variable} ${geistSans.variable} h-full antialiased dark`}
       suppressHydrationWarning
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "REKT",
+              "url": "https://rektagents.xyz",
+              "logo": "https://rektagents.xyz/wreck.svg",
+              "description": "Crypto intelligence platform for agent builders. Track DEX tokens, manage portfolios, discover agents, and earn rewards.",
+              "sameAs": [
+                "https://x.com/rektsagents"
+              ],
+              "founder": {
+                "@type": "Person",
+                "name": "Ken Abestilla"
+              }
+            })
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "REKT",
+              "url": "https://rektagents.xyz",
+              "description": "The platform where agent builders ship, earn, and grow together.",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://rektagents.xyz/search?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+              }
+            })
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-black text-white">
         <Providers>
           <Navbar />

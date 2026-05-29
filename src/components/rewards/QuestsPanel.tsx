@@ -17,6 +17,7 @@ export function QuestsPanel() {
   const { data, isLoading } = useQuests(address);
   const claimQuest = useClaimQuest();
   const [tab, setTab] = useState<'daily' | 'weekly' | 'achievements'>('daily');
+  const [verifying, setVerifying] = useState<string | null>(null);
 
   if (!address) return null;
   if (isLoading) {
@@ -33,8 +34,6 @@ export function QuestsPanel() {
   const quests = data?.quests || [];
   const streak = data?.streak;
   const filtered = quests.filter((q: any) => q.quest_type === tab);
-
-  const [verifying, setVerifying] = useState<string | null>(null);
 
   const handleClaim = (questId: string) => {
     if (!address) return;

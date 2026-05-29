@@ -9,10 +9,9 @@ async function main() {
   const bal = await ethers.provider.getBalance(deployerAddr);
   console.log("Balance:", ethers.formatEther(bal), "ETH");
 
-  // 1. REKTToken
-  const token = await ethers.deployContract("REKTToken", [deployerAddr]);
-  const tokenAddr = await token.getAddress();
-  console.log("1/10 REKTToken:", tokenAddr);
+  // 1. REKTToken (already deployed on Base mainnet)
+  const tokenAddr = "0x8456CaC7C890CC2f4D35ca69A62D3bD1Df2a7580";
+  console.log("1/10 REKTToken (existing):", tokenAddr);
 
   // 2. AgentNFT
   const agentNFT = await ethers.deployContract("AgentNFT", [deployerAddr, tokenAddr]);
@@ -72,7 +71,7 @@ async function main() {
   console.log("10/10 Funded reward pool: 100M REKT");
 
   console.log("\n========== DEPLOYMENT COMPLETE ==========");
-  console.log(`Network: Base Sepolia (chain ${((await ethers.provider.getNetwork()).chainId)})`);
+  console.log(`Network: Base (chain ${((await ethers.provider.getNetwork()).chainId)})`);
   console.log(`Deployer: ${deployerAddr}`);
 
   console.log("\n========== ADD TO .env.local ==========");

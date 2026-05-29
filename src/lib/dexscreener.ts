@@ -31,6 +31,7 @@ const POPULAR_ICONS: Record<string, string> = {
   'base:0x532f27101965dd16442e59d40670faf5ebb142e4': 'https://assets.coingecko.com/coins/images/35529/small/1000050750.png',
   'base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913': 'https://assets.coingecko.com/coins/images/6319/small/usdc.png',
   'base:0x4200000000000000000000000000000000000006': 'https://assets.coingecko.com/coins/images/279/small/ethereum.png',
+  'base:0x8456cac7c890cc2f4d35ca69a62d3bd1df2a7580': 'https://dd.dexscreener.com/ds-data/tokens/base/0x8456cac7c890cc2f4d35ca69a62d3bd1df2a7580.png',
   // BSC
   'bsc:0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c': 'https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png',
   'bsc:0xe9e7cea3dedca5984780bafc599bd69add087d56': 'https://assets.coingecko.com/coins/images/325/small/Tether.png',

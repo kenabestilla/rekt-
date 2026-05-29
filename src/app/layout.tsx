@@ -7,6 +7,7 @@ import { PriceTicker } from "@/components/layout/PriceTicker";
 import { Footer } from "@/components/layout/Footer";
 import { SearchOverlay } from "@/components/layout/SearchOverlay";
 import { OnboardingModal } from "@/components/ui/OnboardingModal";
+import { Analytics } from "@vercel/analytics/react";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -113,6 +114,7 @@ export default function RootLayout({
           <SearchOverlay />
           <OnboardingModal />
         </Providers>
+        <Analytics />
       </body>
     </html>
   );

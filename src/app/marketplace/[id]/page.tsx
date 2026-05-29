@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAccount } from 'wagmi';
+import { ShareButton } from '@/components/ui/ShareButton';
 
 const STATUS_COLORS: Record<string, string> = {
   open: 'text-green-400 border-green-400/30 bg-green-400/5',
@@ -143,6 +144,11 @@ export default function MarketplaceDetailPage() {
             <span className="text-white/30 text-xs font-mono">
               {task.category}
             </span>
+            <ShareButton
+              url={`https://rektagents.xyz/marketplace/${task.id}`}
+              title={task.title}
+              text={`Earn ${parseFloat(task.reward_amount).toLocaleString()} ${task.reward_token || 'REKT'} — ${task.title}`}
+            />
           </div>
           <h1 className="text-3xl font-black tracking-tight mb-4">{task.title}</h1>
           <p className="text-white/50 font-mono text-sm leading-relaxed">{task.description}</p>

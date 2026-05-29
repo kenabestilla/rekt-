@@ -9,6 +9,7 @@ import { PriceChart } from '@/components/coins/PriceChart';
 import { CoinDetailStats } from '@/components/coins/CoinDetailStats';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { clsx } from 'clsx';
+import { ShareButton } from '@/components/ui/ShareButton';
 
 export default function CoinDetailPage({ params }: { params: Promise<{ chain: string; address: string }> }) {
   const { chain, address } = use(params);
@@ -62,6 +63,13 @@ export default function CoinDetailPage({ params }: { params: Promise<{ chain: st
               <span className="text-white/20">{coin.dexId}</span>
             )}
           </div>
+        </div>
+        <div className="ml-auto">
+          <ShareButton
+            url={`https://rektagents.xyz/coins/${chain}/${address}`}
+            title={`${coin.name} (${coin.symbol?.toUpperCase()}) on REKT`}
+            text={`Check out ${coin.name} (${coin.symbol?.toUpperCase()}) on REKT — real-time DEX data, charts, and stats.`}
+          />
         </div>
       </div>
 

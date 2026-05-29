@@ -7,6 +7,7 @@ import { AgentAnalytics } from '@/components/agents/AgentAnalytics';
 import { AgentReviews } from '@/components/agents/AgentReviews';
 import { CATEGORY_LABELS } from '@/types/agent';
 import { clsx } from 'clsx';
+import { ShareButton } from '@/components/ui/ShareButton';
 
 export default function AgentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -95,7 +96,7 @@ export default function AgentDetailPage({ params }: { params: Promise<{ id: stri
               </div>
 
               {/* Links */}
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 {agent.website && (
                   <a href={agent.website} target="_blank" rel="noopener noreferrer"
                     className="px-3 py-1.5 border border-white/10 text-white/40 hover:text-white text-xs font-mono transition-colors">
@@ -108,6 +109,11 @@ export default function AgentDetailPage({ params }: { params: Promise<{ id: stri
                     twitter →
                   </a>
                 )}
+                <ShareButton
+                  url={`https://rektagents.xyz/agents/${agent.id}`}
+                  title={`${agent.name} on REKT`}
+                  text={`Check out ${agent.name} — ${agent.description?.slice(0, 100)}...`}
+                />
               </div>
             </div>
           </div>
